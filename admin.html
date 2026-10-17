@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting to Admin Panel...</title>
+  <script>
+    (function() {
+      const AUTH_KEY = 'portfolio_admin_auth_user';
+      const isAuth = sessionStorage.getItem(AUTH_KEY) === 'Gokul' || localStorage.getItem(AUTH_KEY) === 'Gokul';
+      if (isAuth) {
+        window.location.replace('index.html?admin=open');
+      } else {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body style="background:#08080a;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+  <p>Redirecting to Admin Portal...</p>
+</body>
+</html>

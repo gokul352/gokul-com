@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Admin Portal Login &mdash; Portfolio 2026</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #08080a;
+      --bg-card: #111116;
+      --accent: #ccff00;
+      --accent-glow: rgba(204, 255, 0, 0.25);
+      --font-display: 'Syne', system-ui, sans-serif;
+      --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Space Grotesk', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #f5f5f7;
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Ambient glow circles */
+    .glow-sphere {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(204, 255, 0, 0.09) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(40px);
+    }
+    .glow-1 { top: -100px; left: -100px; }
+    .glow-2 { bottom: -120px; right: -100px; background: radial-gradient(circle, rgba(0, 240, 255, 0.06) 0%, transparent 70%); }
+
+    .login-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    /* Main Login Card */
+    .login-card {
+      background: rgba(17, 17, 22, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 30px rgba(204, 255, 0, 0.1);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .login-card:hover {
+      border-color: rgba(204, 255, 0, 0.3);
+    }
+
+    /* Card Header */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .header-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #000;
+      font-size: 24px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px var(--accent-glow);
+      flex-shrink: 0;
+    }
+    .header-titles h1 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #fff;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .header-titles p {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #888899;
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9999a5;
+      margin-bottom: 7px;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      color: #666;
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    .login-input {
+      width: 100%;
+      background: #15151c;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 12px 14px 12px 42px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .login-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(204, 255, 0, 0.15);
+      background: #181822;
+    }
+
+    .toggle-pass-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #777;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .toggle-pass-btn:hover { color: var(--accent); }
+
+    /* Checkbox & Options */
+    .options-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 18px 0 24px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: #888;
+    }
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .remember-label input[type="checkbox"] {
+      accent-color: var(--accent);
+      cursor: pointer;
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px var(--accent-glow);
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .submit-btn:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Back Link */
+    .back-row {
+      margin-top: 22px;
+      text-align: center;
+    }
+    .back-link {
+      color: #888899;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      text-decoration: none;
+      transition: color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-link:hover {
+      color: var(--accent);
+    }
+
+    /* Alerts */
+    .alert-box {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      margin-bottom: 18px;
+      align-items: center;
+      gap: 8px;
+    }
+    .alert-error {
+      background: rgba(255, 42, 75, 0.12);
+      border: 1px solid rgba(255, 42, 75, 0.4);
+      color: #ff6b81;
+    }
+    .alert-success {
+      background: rgba(204, 255, 0, 0.12);
+      border: 1px solid rgba(204, 255, 0, 0.4);
+      color: var(--accent);
+    }
+
+    /* Shake Animation */
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* Already logged in state */
+    .already-logged-card {
+      display: none;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .already-logged-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .already-logged-card p {
+      font-size: 0.82rem;
+      color: #888;
+      font-family: var(--font-mono);
+      margin-bottom: 22px;
+    }
+    .button-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .secondary-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #ccc;
+      border-radius: 10px;
+      padding: 11px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .secondary-btn:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+    .logout-btn-alt {
+      background: rgba(255, 50, 50, 0.1);
+      border: 1px solid rgba(255, 50, 50, 0.25);
+      color: #ff7070;
+    }
+    .logout-btn-alt:hover {
+      background: rgba(255, 50, 50, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+
+  <div class="login-container">
+    <div class="login-card" id="loginCard">
+
+      <!-- Active Login Form -->
+      <div id="loginFormSection">
+        <!-- Header -->
+        <div class="card-header">
+          <div class="header-badge">⚡</div>
+          <div class="header-titles">
+            <h1>Admin Portal Login</h1>
+            <p>Portfolio 2026 &bull; Gokul Edition</p>
+          </div>
+        </div>
+
+        <!-- Alert messages -->
+        <div id="errorAlert" class="alert-box alert-error">
+          <span>⚠️</span>
+          <span id="errorMsg">Invalid username or password.</span>
+        </div>
+
+        <div id="successAlert" class="alert-box alert-success">
+          <span>🎉</span>
+          <span>Access Granted! Redirecting to Admin Panel...</span>
+        </div>
+
+        <!-- Form -->
+        <form id="adminLoginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="username">Username</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input 
+                type="text" 
+                id="username" 
+                class="login-input" 
+                placeholder="Gokul" 
+                value="Gokul"
+                required 
+                autocomplete="username"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔑</span>
+              <input 
+                type="password" 
+                id="password" 
+                class="login-input" 
+                placeholder="gokul@2003" 
+                required 
+                autocomplete="current-password"
+              />
+              <button type="button" class="toggle-pass-btn" onclick="togglePass()" title="Show/Hide Password">
+                <span id="passIcon">👁️</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="options-row">
+            <label class="remember-label">
+              <input type="checkbox" id="rememberMe" checked />
+              <span>Keep me logged in</span>
+            </label>
+            <span style="color:#555;">Protected Session</span>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span>🔓 Unlock Admin Panel</span>
+          </button>
+        </form>
+
+        <div class="back-row">
+          <a href="index.html" class="back-link">
+            <span>&larr; Return to Public Portfolio</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Already Logged In Section -->
+      <div id="alreadyLoggedInSection" class="already-logged-card">
+        <div style="font-size:2.8rem; margin-bottom:12px;">🛡️</div>
+        <h2>Already Logged In</h2>
+        <p>Authenticated as <strong style="color:var(--accent);">Gokul</strong></p>
+
+        <div class="button-stack">
+          <a href="index.html?admin=open" class="submit-btn" style="text-decoration:none;">
+            <span>⚡ Open Admin Panel</span>
+          </a>
+          <a href="index.html" class="secondary-btn">
+            <span>View Public Portfolio</span>
+          </a>
+          <button type="button" class="secondary-btn logout-btn-alt" onclick="handleLogout()">
+            <span>🔒 Log Out</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const AUTH_KEY = 'portfolio_admin_auth_user';
+    const VALID_USER = 'Gokul';
+    const VALID_PASS = 'gokul@2003';
+
+    // Check if already authenticated
+    function checkAuthStatus() {
+      const isAuth = sessionStorage.getItem(AUTH_KEY) === VALID_USER || localStorage.getItem(AUTH_KEY) === VALID_USER;
+      if (isAuth) {
+        document.getElementById('loginFormSection').style.display = 'none';
+        document.getElementById('alreadyLoggedInSection').style.display = 'block';
+      } else {
+        document.getElementById('loginFormSection').style.display = 'block';
+        document.getElementById('alreadyLoggedInSection').style.display = 'none';
+        setTimeout(() => {
+          const pass = document.getElementById('password');
+          if (pass) pass.focus();
+        }, 150);
+      }
+    }
+
+    function togglePass() {
+      const pass = document.getElementById('password');
+      const icon = document.getElementById('passIcon');
+      if (pass.type === 'password') {
+        pass.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        pass.type = 'password';
+        icon.textContent = '👁️';
+      }
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const remember = document.getElementById('rememberMe').checked;
+      const card = document.getElementById('loginCard');
+      const errAlert = document.getElementById('errorAlert');
+      const succAlert = document.getElementById('successAlert');
+      const submitBtn = document.getElementById('submitBtn');
+
+      errAlert.style.display = 'none';
+      succAlert.style.display = 'none';
+
+      // Validate Gokul / gokul@2003
+      if (user.toLowerCase() === VALID_USER.toLowerCase() && pass === VALID_PASS) {
+        // Success
+        sessionStorage.setItem(AUTH_KEY, VALID_USER);
+        if (remember) {
+          localStorage.setItem(AUTH_KEY, VALID_USER);
+        } else {
+          localStorage.removeItem(AUTH_KEY);
+        }
+
+        succAlert.style.display = 'flex';
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.7';
+        submitBtn.innerHTML = '<span>✓ Access Granted...</span>';
+
+        setTimeout(() => {
+          window.location.href = 'index.html?admin=open';
+        }, 500);
+      } else {
+        // Failure
+        errAlert.style.display = 'flex';
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 450);
+        const passInput = document.getElementById('password');
+        passInput.select();
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem(AUTH_KEY);
+      localStorage.removeItem(AUTH_KEY);
+      window.location.reload();
+    }
+
+    checkAuthStatus();
+  </script>
+</body>
+</html>
